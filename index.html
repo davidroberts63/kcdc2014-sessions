@@ -204,6 +204,10 @@
 
 	    		$(item).prop('checked', goingTo == item.value);
 
+          var selectme = $("tr." + courseId)[0];
+          $(selectme).toggleClass('success', goingTo == "yes");
+          $(selectme).toggleClass('danger', goingTo == "no");
+
 	    	});
 
 	    	$("input").change(function(ev) {
