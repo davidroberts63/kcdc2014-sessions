@@ -34,7 +34,7 @@
 		Created by David Roberts @davidroberts63.
 		Contributions and much appreciated help by:
 		<ul>
-			<li>No one yet.</li>
+			<li>PirateJon (not on twitter just on github). https://github.com/piratejon</li>
 		</ul>
 
 		Idea came from someone who did a much better job of this last year. If you are out there let me know so I can give credit to you for the original idea.
@@ -74,14 +74,28 @@
 		<tr>
 	      <td>{course_title}</td>
 	      <td>{author}</td>
-	      <td>{description}</td>
 	      <td>
-	      	<select class="form-control" id="{title_id}">
-	          <option value='yes'>Yes</option>
-	          <option value='no'>No</option>
-	          <option value='maybe'>Maybe</option>
-	        </select>
+	      <div class="form-group">
+			<div class="radio">
+				<label>
+					<input type="radio" name="{title_id}" value='yes' id="{title_id}-going">Going</input>
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input style="" type="radio" name="{title_id}" value='no' id="{title_id}-no">No</input>
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input type="radio" name="{title_id}" value='maybe' id="{title_id}-maybe">Maybe</input>
+				</label>
+			</div>
+		  </div>
 	       </td>
+	    </tr>
+	    <tr>
+	    	<td colspan="3">{description}</td>
 	    </tr>
 	</script>
 
@@ -179,15 +193,20 @@
     		generateSessionsMarkup('div#friday', fridayTimeslots, fridayCourses);
     		generateSessionsMarkup('div#saturday', saturdayTimeslots, saturdayCourses);
 
-	    	$("select").change(function(ev)
-	    	{
-	    		localStorage.setItem(ev.target.id, ev.target.value);
+	    	$("input").each(function(index, item) {
+	    		var courseId = item.id.split('-')[0];
+	    		var goingTo = localStorage.getItem(courseId);
+
+	    		$(item).prop('checked', goingTo == item.value);
+
 	    	});
 
-	    	$("select").each(function(index, item) {
-	    		$(item).val(localStorage.getItem(item.id));
-	    	});
-	    	
+	    	$("input").change(function(ev) {
+	    		if (ev.target.checked) {
+	    			var courseId = ev.target.id.split('-')[0];
+	    			localStorage.setItem(courseId, ev.target.value);
+	    		}
+	    	});	    	
     	})
     </script>
 
