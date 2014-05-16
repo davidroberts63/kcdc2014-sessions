@@ -8,6 +8,11 @@
 
     <!-- Bootstrap -->
 	<link rel="stylesheet" href="flatly.css">
+  <style type="text/css">
+.selectedno { background-color: #C23B22; }
+.selectedyes { background-color: #03C03C; }
+.selectedmaybe { }
+  </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -71,7 +76,7 @@
 	</script>
 
 	<script type="text/html" id="a-course">
-		<tr>
+		<tr class="{title_id}">
 	      <td>{course_title}</td>
 	      <td>{author}</td>
 	      <td>
@@ -205,6 +210,17 @@
 	    		if (ev.target.checked) {
 	    			var courseId = ev.target.id.split('-')[0];
 	    			localStorage.setItem(courseId, ev.target.value);
+
+            var selectme = $("tr." + courseId)[0];
+
+            console.log(courseId + ", " + selectme + ", " + ev.target.value);
+            if ( ev.target.value == "yes" ) {
+              $(selectme).css('background-color', '#03C03C');
+            } else if ( ev.target.value == "no" ) {
+              $(selectme).css('background-color', '#C23B22');
+            } else {
+              $(selectme).css('background-color', 'inherit');
+            }
 	    		}
 	    	});	    	
     	})
