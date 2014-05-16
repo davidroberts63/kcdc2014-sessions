@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Independent KCDC 2014 Session Menu</title>
+
+    <!-- Bootstrap -->
+	<link rel="stylesheet" href="flatly.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+<div class="container">
+
+	<ul class="nav nav-tabs" style="margin-bottom: 15px;">
+	  <li><a href="#home" data-toggle="tab">KCDC 2014</a></li>
+	  <li><a href="#friday" data-toggle="tab">Friday</a></li>
+	  <li><a href="#saturday" data-toggle="tab">Saturday</a></li>
+	</ul>	
+
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane fade active in" id="home">
+		This is independent work and not affiliated with KCDC. I'm just an attendee that couldn't find the app for my iPad Mini. Pick a day, choose Yes, No, Maybe. Data is stored in the browser so it's good between browser closings.
+		<br/><br/>
+		Filtering might be added soon.
+		<br/><br/>
+		Created by David Roberts @davidroberts63.
+		Contributions and much appreciated help by:
+		<ul>
+			<li>No one yet.</li>
+		</ul>
+
+		Idea came from someone who did a much better job of this last year. If you are out there let me know so I can give credit to you for the original idea.
+	</div>
+
+	<div class="tab-pane fade" id="friday">
+	</div>
+
+	<div class="tab-pane fade" id="saturday">
+	</div>
+</div>
+
+</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+	    function nano(template, data) {
+		  return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
+		    var keys = key.split("."), v = data[keys.shift()];
+
+		    if (typeof(v) == 'function') { v = v.bind(data).call(); }
+
+		    for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+		    return (typeof v !== "undefined" && v !== null) ? v : "";
+		  });
+		}
+	</script>
+
+	<script type="text/html" id="a-course">
+		<tr>
+	      <td>{course_title}</td>
+	      <td>{author}</td>
+	      <td>{description}</td>
+	      <td>
+	      	<select class="form-control" id="{title_id}">
+	          <option value='yes'>Yes</option>
+	          <option value='no'>No</option>
+	          <option value='maybe'>Maybe</option>
+	        </select>
+	       </td>
+	    </tr>
+	</script>
+
+	<script type="text/html" id="a-timeslot">
+		<div class="panel-group" id="accordion" id="{time_id}">
+		  <div class="panel panel-info">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+		          {time}
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="collapseOne" class="panel-collapse collapse in">
+		      <div class="panel-body">
+				<table class="table table-striped table-hover ">
+				  <tbody class="the-courses">{the_courses}</tbody>
+				</table>         
+		      </div>
+		    </div>
+		  </div>
+		</div>	
+	</script>
+
+	<script src="coursedata.js"></script>
+
+    <script type="text/javascript">
+    	
+    	function getCoursesMarkup(theCourses) {
+    		var markup = '';
+    		var course_template = $("#a-course")[0].innerHTML;
+
+    		for(var i=0;i<theCourses.length;i++) {
+
+    			markup += nano(course_template, theCourses[i]);	
+    		}
+
+			return markup;    		
+    	}
+
+    	function getTimeslotMarkup(theCourses, timeslotId) {
+    		var markup = '';
+    		var timeslot_template = $("#a-timeslot")[0].innerHTML;
+
+    		var coursesForTimeslot = theCourses.filter(function(value, index, ar) {
+    			return value.time_id() == timeslotId;
+    		});
+
+    		var coursesMarkup = getCoursesMarkup(coursesForTimeslot);
+    		if (coursesMarkup.length > 0) {
+	    		markup = nano(timeslot_template, { 
+	    			time: coursesForTimeslot[0].time, 
+	    			time_id: timeslotId, 
+	    			the_courses: coursesMarkup 
+	    		});
+    		}
+
+    		return markup;
+    	}
+
+    	function setCommonCourseData(theCourses) {
+
+    		for(var i=0;i<theCourses.length;i++) {
+    			
+		    	theCourses[i].title_id = function() { 
+		    		return this.course_title.toLowerCase().replace(/[^a-z0-9]/g,''); 
+		    	};
+	
+				theCourses[i].time_id = function() {
+		    		return this.time.toLowerCase().replace(/[^a-z0-9]/g,'');
+		    	};
+
+    		}
+
+    		return theCourses;
+
+    	}
+
+    	function generateSessionsMarkup(elementId, sessionTimeslots, theCourses) {
+    		for(var i=0;i<sessionTimeslots.length;i++) 
+    		{
+	    		var markup = getTimeslotMarkup(theCourses, sessionTimeslots[i]);
+    			$(elementId).append(markup);
+    		}
+    	}
+
+    	$(document).ready(function() {
+    		
+    		fridayCourses = setCommonCourseData(fridayCourses);
+			saturdayCourses = setCommonCourseData(saturdayCourses);
+
+    		var fridayTimeslots = ['830am930am','940am1040am','1050am1150am','100pm200pm','210pm310pm','320pm420pm','430pm530pm'];
+    		var saturdayTimeslots = ['830am930am','940am1040am','1050am1150am','100pm200pm','210pm310pm','320pm420pm'];
+
+    		generateSessionsMarkup('div#friday', fridayTimeslots, fridayCourses);
+    		generateSessionsMarkup('div#saturday', saturdayTimeslots, saturdayCourses);
+
+	    	$("select").change(function(ev)
+	    	{
+	    		localStorage.setItem(ev.target.id, ev.target.value);
+	    	});
+
+	    	$("select").each(function(index, item) {
+	    		$(item).val(localStorage.getItem(item.id));
+	    	});
+	    	
+    	})
+    </script>
+
+  </body>
+</html>
