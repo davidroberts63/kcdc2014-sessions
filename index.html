@@ -75,11 +75,23 @@
 	      <td>{course_title}</td>
 	      <td>{author}</td>
 	      <td>
-	      	<select class="form-control" id="{title_id}">
-	          <option value='yes'>Yes</option>
-	          <option value='no'>No</option>
-	          <option value='maybe'>Maybe</option>
-	        </select>
+	      <div class="form-group">
+			<div class="radio">
+				<label>
+					<input type="radio" name="{title_id}" value='yes' id="{title_id}-going">Going</input>
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input style="" type="radio" name="{title_id}" value='no' id="{title_id}-no">No</input>
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input type="radio" name="{title_id}" value='maybe' id="{title_id}-maybe">Maybe</input>
+				</label>
+			</div>
+		  </div>
 	       </td>
 	    </tr>
 	    <tr>
@@ -181,15 +193,20 @@
     		generateSessionsMarkup('div#friday', fridayTimeslots, fridayCourses);
     		generateSessionsMarkup('div#saturday', saturdayTimeslots, saturdayCourses);
 
-	    	$("select").change(function(ev)
-	    	{
-	    		localStorage.setItem(ev.target.id, ev.target.value);
+	    	$("input").each(function(index, item) {
+	    		var courseId = item.id.split('-')[0];
+	    		var goingTo = localStorage.getItem(courseId);
+
+	    		$(item).prop('checked', goingTo == item.value);
+
 	    	});
 
-	    	$("select").each(function(index, item) {
-	    		$(item).val(localStorage.getItem(item.id));
-	    	});
-	    	
+	    	$("input").change(function(ev) {
+	    		if (ev.target.checked) {
+	    			var courseId = ev.target.id.split('-')[0];
+	    			localStorage.setItem(courseId, ev.target.value);
+	    		}
+	    	});	    	
     	})
     </script>
 
