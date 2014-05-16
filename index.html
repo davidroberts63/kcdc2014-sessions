@@ -212,15 +212,8 @@
 	    			localStorage.setItem(courseId, ev.target.value);
 
             var selectme = $("tr." + courseId)[0];
-
-            console.log(courseId + ", " + selectme + ", " + ev.target.value);
-            if ( ev.target.value == "yes" ) {
-              $(selectme).css('background-color', '#03C03C');
-            } else if ( ev.target.value == "no" ) {
-              $(selectme).css('background-color', '#C23B22');
-            } else {
-              $(selectme).css('background-color', 'inherit');
-            }
+            $(selectme).toggleClass('success', ev.target.value == "yes");
+            $(selectme).toggleClass('danger', ev.target.value == "no");
 	    		}
 	    	});	    	
     	})
